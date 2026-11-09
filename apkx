@@ -49,6 +49,11 @@ parser = argparse.ArgumentParser(description='Decompile an Android APK archive.'
 
 parser.add_argument('-c', '--converter', help='Dex to jar conversion method (default: dex2jar)', choices=['dex2jar','enjarify'], default = "dex2jar")
 parser.add_argument('-d', '--decompiler', help='Decompiler backend to use (default: cfr)', choices=['cfr','procyon'], default = "cfr")
+parser.add_argument(
+    '-o', '--output',
+    help='Output directory',
+    default=None
+)
 parser.add_argument('apkfile', help='File to decompile')
 
 args = parser.parse_args()
@@ -57,7 +62,13 @@ args = parser.parse_args()
 	Unzip the application package.
 '''
 
-ext_path = os.path.splitext(os.path.basename(args.apkfile))[0]
+if args.output:
+    ext_path = os.path.abspath(args.output)
+else:
+    ext_path = os.path.splitext(os.path.basename(args.apkfile))[0]
+
+os.makedirs(ext_path, exist_ok=True)
+
 src_path = ext_path + "/src"
 
 lib_path = cwd + "/apkx-libs.jar"
